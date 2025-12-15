@@ -1,0 +1,16 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Promotr" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Draw system bar backgrounds so we can control status/navigation bar colors -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <!-- Set a neutral (white) status/navigation bar to avoid purple tint -->
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:navigationBarColor">@color/white</item>
+        <!-- Use dark status bar icons to remain visible on light background -->
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="Theme.Promotr" parent="Base.Theme.Promotr" />
+</resources>
