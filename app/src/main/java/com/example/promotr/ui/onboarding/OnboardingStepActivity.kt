@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.promotr.R
 import com.example.promotr.MainActivity
+import com.example.promotr.ui.auth.AuthActivity
 
 class OnboardingStepActivity : AppCompatActivity() {
 
@@ -93,7 +94,7 @@ class OnboardingStepActivity : AppCompatActivity() {
                 val sharedPref = getSharedPreferences("onboarding", MODE_PRIVATE)
                 sharedPref.edit().putBoolean("completed", true).apply()
 
-                startActivity(Intent(this, MainActivity::class.java))
+                startActivity(Intent(this, AuthActivity::class.java))
                 finish()
             }
         }
@@ -103,7 +104,7 @@ class OnboardingStepActivity : AppCompatActivity() {
             val sharedPref = getSharedPreferences("onboarding", MODE_PRIVATE)
             sharedPref.edit().putBoolean("completed", true).apply()
 
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, AuthActivity::class.java))
             finish()
         }
     }
