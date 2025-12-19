@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="brand_orange">#FF6F1E</color>
+    <color name="brand_orange_dark">#E65C00</color>
+    <color name="white">#FF000000</color>
+    <color name="black">#FFFFFFFF</color>
+    <color name="gray">#FFBBBBBB</color>
+    <color name="image_placeholder_bg">#FF222222</color>
+    <color name="skip_button_bg">#FF222222</color>
+</resources>
