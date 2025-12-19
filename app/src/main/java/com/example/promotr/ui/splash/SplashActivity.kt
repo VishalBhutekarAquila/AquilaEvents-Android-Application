@@ -1,97 +1,155 @@
 package com.example.promotr.ui.splash
 
 import android.Manifest
+import android.animation.ObjectAnimator
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.promotr.R
-import com.example.promotr.ui.onboarding.OnboardingActivity
-import android.animation.ObjectAnimator
-import android.animation.Animator
-import android.widget.ProgressBar
+import com.example.promotr.ui.onboarding.OnboardingStepActivity
 
-/**
- * SplashActivity is the entry point. It checks internet and storage permissions.
- * - Guest mode, onboarding, and role-based logic would be handled after splash (see comments).
- * - Storage permission is needed for Room to cache data on device. If denied, fallback is explained in repository.
- */
 class SplashActivity : AppCompatActivity() {
     private lateinit var viewModel: SplashViewModel
+    private lateinit var progressStatusText: TextView
+    private lateinit var prefs: SharedPreferences
+    private val PERMISSION_PREF = "permission_prefs"
+    private val PERMISSION_ASKED_KEY = "permission_asked"
 
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                viewModel.checkInternetAndProceed()
-            } else {
-                // If storage permission denied, fallback to in-memory cache (see repository comments)
-                showPermissionDeniedDialog()
-            }
-        }
+    // Flag to prevent multiple navigation calls
+    private var hasNavigated = false
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        // Start animation after permission handling
+        startProgressAnimation()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-        viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[SplashViewModel::class.java]
 
-        // Request storage permission for Room caching
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                // Ask user for app-level internet consent (informational dialog). Android has no runtime permission for INTERNET.
-                showInternetConsentDialog()
-            } else {
-            // Explain why permission is needed
-            if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                AlertDialog.Builder(this)
-                    .setTitle("Storage Permission Required")
-                    .setMessage("Promotr needs storage access to cache data for offline use.")
-                    .setPositiveButton("OK") { _, _ ->
-                        requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    }
-                    .setNegativeButton("Cancel") { _, _ ->
-                        showPermissionDeniedDialog()
-                    }
-                    .show()
-            } else {
-                requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            }
-        }
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        )[SplashViewModel::class.java]
 
+        progressStatusText = findViewById(R.id.progressStatusText)
+        prefs = getSharedPreferences(PERMISSION_PREF, MODE_PRIVATE)
+
+        // Observe internet availability
         viewModel.isInternetAvailable.observe(this) { available ->
             if (!available) {
                 showNoInternetDialog()
             }
         }
-        // Observe navigation. ViewModel decides whether to send user to onboarding or main.
-        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
+
+        // Observe navigation trigger - ONLY navigate when animation completes
         viewModel.navigateToNext.observe(this) { go ->
-            if (go == true) {
-                // Animate progress bar to completion, then navigate based on stored state.
-                try {
-                    val animator = ObjectAnimator.ofInt(progressBar, "progress", progressBar.progress, progressBar.max)
-                    animator.duration = 600
-                    animator.addListener(object : Animator.AnimatorListener {
-                        override fun onAnimationStart(animation: Animator) {}
-                        override fun onAnimationEnd(animation: Animator) {
-                            // Always show onboarding after splash
-                            startActivity(Intent(this@SplashActivity, OnboardingActivity::class.java))
-                            finish()
-                        }
-                        override fun onAnimationCancel(animation: Animator) {}
-                        override fun onAnimationRepeat(animation: Animator) {}
-                    })
-                    animator.start()
-                } catch (t: Throwable) {
-                    // Fallback: decide immediately
-                    // Fallback: always navigate to onboarding
-                    startActivity(Intent(this, OnboardingActivity::class.java))
-                    finish()
+            if (go == true && !hasNavigated) {
+                hasNavigated = true
+                navigateToNextScreen()
+            }
+        }
+
+        // Check permission and start
+        checkPermissionAndStart()
+    }
+
+    private fun checkPermissionAndStart() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            startProgressAnimation()
+        } else if (!prefs.getBoolean(PERMISSION_ASKED_KEY, false)) {
+            showStoragePermissionDialog()
+            prefs.edit().putBoolean(PERMISSION_ASKED_KEY, true).apply()
+        } else {
+            startProgressAnimation()
+        }
+    }
+
+    private fun startProgressAnimation() {
+        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
+        progressBar.max = 100
+        progressBar.progress = 0
+
+        // Show first text immediately
+        progressStatusText.text = "Work Smarter. Shine Brighter."
+
+        // First segment: 0-33% (0-2000ms)
+        val firstAnimator = ObjectAnimator.ofInt(progressBar, "progress", 0, 33).apply {
+            duration = 2000
+            start()
+        }
+
+        firstAnimator.doOnEnd {
+            // Second text at 2000ms
+            progressStatusText.text = "Your crew. Your strength, your Aquila."
+
+            // Second segment: 33-66% (2000-4000ms)
+            val secondAnimator = ObjectAnimator.ofInt(progressBar, "progress", 33, 66).apply {
+                duration = 2000
+                start()
+            }
+
+            secondAnimator.doOnEnd {
+                // Third text at 4000ms
+                progressStatusText.text = "Find work that moves you"
+
+                // Third segment: 66-100% (4000-6000ms)
+                val thirdAnimator = ObjectAnimator.ofInt(progressBar, "progress", 66, 100).apply {
+                    duration = 2000
+                    start()
+                }
+
+                thirdAnimator.doOnEnd {
+                    // Animation complete - NOW check internet and navigate
+                    viewModel.checkInternetAndProceed()
                 }
             }
         }
+    }
+
+    private fun navigateToNextScreen() {
+        val onboardingPrefs = getSharedPreferences("onboarding", MODE_PRIVATE)
+        val isOnboardingCompleted = onboardingPrefs.getBoolean("completed", false)
+
+        val intent = if (isOnboardingCompleted) {
+            // Navigate to MainActivity if onboarding is done
+            Intent(this, OnboardingStepActivity::class.java)
+        } else {
+            // Navigate to Onboarding if first time
+            Intent(this, com.example.promotr.MainActivity::class.java)
+        }
+
+        startActivity(intent)
+        finish()
+    }
+
+    private fun showStoragePermissionDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Storage Permission")
+            .setMessage("Aquila needs storage access to cache data for a better experience.")
+            .setPositiveButton("Allow") { _, _ ->
+                requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
+            .setNegativeButton("Skip") { _, _ ->
+                startProgressAnimation()
+            }
+            .setCancelable(false)
+            .show()
     }
 
     private fun showNoInternetDialog() {
@@ -99,35 +157,7 @@ class SplashActivity : AppCompatActivity() {
             .setTitle("No Internet Connection")
             .setMessage("Please check your internet connection and try again.")
             .setPositiveButton("Retry") { _, _ ->
-                viewModel.checkInternetAndProceed()
-            }
-            .setNegativeButton("Exit") { _, _ ->
-                finish()
-            }
-            .setCancelable(false)
-            .show()
-    }
-
-    private fun showInternetConsentDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("Use Internet?")
-            .setMessage("Promotr uses the internet to fetch latest promotions. Allow usage?")
-            .setPositiveButton("Allow") { _, _ ->
-                viewModel.checkInternetAndProceed()
-            }
-            .setNegativeButton("Continue Offline") { _, _ ->
-                // User declined; we still proceed but repository will fall back to Room/offline behavior.
-                viewModel.checkInternetAndProceed()
-            }
-            .setCancelable(false)
-            .show()
-    }
-
-    private fun showPermissionDeniedDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("Permission Denied")
-            .setMessage("Without storage permission, Promotr cannot cache data for offline use. The app will run in online-only mode.")
-            .setPositiveButton("Continue") { _, _ ->
+                // Check internet again and proceed if animation already done
                 viewModel.checkInternetAndProceed()
             }
             .setNegativeButton("Exit") { _, _ ->

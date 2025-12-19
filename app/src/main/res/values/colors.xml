@@ -5,5 +5,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
     <color name="card_shadow">#44000000</color>
+    <color name="gray">#FF888888</color>
+    <color name="image_placeholder_bg">#FFF3F3F3</color>
+    <color name="skip_button_bg">#FFF8F8F8</color>
     
 </resources>

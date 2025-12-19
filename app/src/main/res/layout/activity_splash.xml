@@ -1,46 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    android:padding="32dp"
+    tools:context=".ui.splash.SplashActivity">
 
-    <!-- Large orange logo at the bottom center -->
+    <!-- Centered Aquila Text -->
     <TextView
         android:id="@+id/appNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:text="aquila."
-        android:textSize="48sp"
+        android:textColor="#FF6A00"
+        android:textSize="64sp"
         android:textStyle="bold"
-        android:textColor="#FF6A00"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="120dp" />
+        android:letterSpacing="0.05" />
 
-    <!-- Progress bar with colored progress -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="@android:style/Widget.ProgressBar.Horizontal"
-        android:layout_width="280dp"
-        android:layout_height="8dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="60dp"
-        android:progress="30"
-        android:max="100"
-        android:progressDrawable="@drawable/progress_bar_splash" />
-
-    <!-- Tagline at the very bottom -->
-    <TextView
-        android:id="@+id/taglineTextView"
-        android:layout_width="wrap_content"
+    <!-- Container for bottom elements -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="&quot;Work Smarter. Shine Brighter.&quot;"
-        android:textSize="14sp"
-        android:textColor="#FF6A00"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="32dp"
-        android:textStyle="bold" />
+        android:layout_marginBottom="60dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Progress Status Text -->
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:progress="0"
+            android:max="100"
+            android:progressTint="#FF6A00"
+            android:progressBackgroundTint="#E0E0E0"
+            android:indeterminate="false"/>
+
+        <TextView
+            android:id="@+id/progressStatusText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:text="Work Smarter. Shine Brighter."
+            android:textColor="#FF6A00"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
 </RelativeLayout>
