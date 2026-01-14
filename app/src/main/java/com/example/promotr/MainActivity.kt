@@ -1,16 +1,29 @@
 package com.example.promotr
 
 import android.os.Bundle
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
+import com.example.promotr.navigation.NavGraph
+import com.example.promotr.ui.theme.AquilaTheme
 
-/**
- * Root MainActivity stub. Kept as a harmless stub so code referring to it doesn't fail.
- */
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Toast.makeText(this, "MainActivity removed — no UI", Toast.LENGTH_SHORT).show()
-        finish()
+        setContent {
+            AquilaTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    val navController = rememberNavController()
+                    NavGraph(navController = navController)
+                }
+            }
+        }
     }
 }
