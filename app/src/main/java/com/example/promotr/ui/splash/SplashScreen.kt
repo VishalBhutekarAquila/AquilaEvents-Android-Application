@@ -4,44 +4,37 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
+import androidx.compose.foundation.layout.size
 import androidx.core.content.ContextCompat
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.promotr.R
-import com.example.promotr.ui.theme.BrandOrange
+import com.example.promotr.ui.theme.GradientStartOrange
+import com.example.promotr.ui.theme.PrimaryOrange
 import com.example.promotr.ui.theme.White
 import kotlinx.coroutines.delay
 
@@ -52,24 +45,10 @@ fun SplashScreen(
     viewModel: SplashViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    var targetProgress by remember { mutableFloatStateOf(0f) }
-    var currentTextIndex by remember { mutableIntStateOf(0) }
     var hasNavigated by remember { mutableStateOf(false) }
     var showPermissionDialog by remember { mutableStateOf(false) }
     var showNoInternetDialog by remember { mutableStateOf(false) }
     var animationStarted by remember { mutableStateOf(false) }
-    
-    val texts = listOf(
-        "Work Smarter. Shine Brighter.",
-        "Your crew. Your strength, your Aquila.",
-        "Find work that moves you"
-    )
-    
-    val animatedProgress by animateFloatAsState(
-        targetValue = targetProgress,
-        animationSpec = tween(durationMillis = 2000),
-        label = "progress"
-    )
     
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -97,25 +76,10 @@ fun SplashScreen(
         }
     }
     
-    // Animate progress in segments
+    // Auto-navigate after a delay (splash screen duration)
     LaunchedEffect(animationStarted) {
         if (animationStarted) {
-            // First segment: 0-33%
-            targetProgress = 0.33f
-            currentTextIndex = 0
-            delay(2000)
-            
-            // Second segment: 33-66%
-            targetProgress = 0.66f
-            currentTextIndex = 1
-            delay(2000)
-            
-            // Third segment: 66-100%
-            targetProgress = 1f
-            currentTextIndex = 2
-            delay(2000)
-            
-            // Check internet and proceed after animation completes
+            delay(2000) // 2 seconds splash screen
             viewModel.checkInternetAndProceed()
         }
     }
@@ -147,58 +111,52 @@ fun SplashScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(White)
-            .padding(32.dp),
+            .background(
+                brush = Brush.radialGradient(
+                    colors = listOf(GradientStartOrange, PrimaryOrange),
+                    center = androidx.compose.ui.geometry.Offset(0.5f, 0.5f),
+                    radius = 1000f
+                )
+            ),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
-        ) {
-            // Logo
-            Image(
-                painter = painterResource(id = R.drawable.startlogo),
-                contentDescription = "Logo",
-                modifier = Modifier.size(300.dp, 244.dp),
-                contentScale = ContentScale.Fit
-            )
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            // App Name
-            Text(
-                text = "aquila.",
-                fontSize = 64.sp,
-                fontWeight = FontWeight.Bold,
-                color = BrandOrange,
-                letterSpacing = 0.05.sp
-            )
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            // Progress Bar
-            LinearProgressIndicator(
-                progress = { animatedProgress },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(20.dp),
-                color = BrandOrange,
-                trackColor = androidx.compose.ui.graphics.Color(0xFFE0E0E0)
-            )
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            // Progress Status Text
-            Text(
-                text = texts.getOrElse(currentTextIndex) { texts[0] },
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = BrandOrange,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
+        // Glow effect - white blurred circle in center
+        // Note: Blur effect in Compose requires RenderEffect (API 31+) or custom implementation
+        // For now, using a semi-transparent circle to simulate the glow
+        Box(
+            modifier = Modifier
+                .size(256.dp)
+                .align(Alignment.Center)
+                .background(
+                    color = White.copy(alpha = 0.1f),
+                    shape = androidx.compose.foundation.shape.CircleShape
+                )
+                .zIndex(0f)
+        )
+        
+        // Promotr text with shadow effect
+        // Using scale to match HTML's transform scale-105 effect
+        Text(
+            text = "Promotr",
+            fontSize = 56.sp, // Base size, responsive: 5xl (48px) to 7xl (72px) equivalent
+            fontWeight = FontWeight.ExtraBold, // font-extrabold
+            color = White,
+            textAlign = TextAlign.Center,
+            letterSpacing = (-0.5).sp, // tracking-tighter equivalent
+            modifier = Modifier
+                .align(Alignment.Center)
+                .zIndex(1f)
+                .graphicsLayer {
+                    scaleX = 1.05f // transform scale-105
+                    scaleY = 1.05f
+                }
+                .shadow(
+                    elevation = 20.dp,
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
+                    ambientColor = Color.Black.copy(alpha = 0.1f),
+                    spotColor = White.copy(alpha = 0.2f)
+                )
+        )
     }
     
     // Permission Dialog
@@ -209,7 +167,7 @@ fun SplashScreen(
                 animationStarted = true
             },
             title = { Text("Storage Permission") },
-            text = { Text("Aquila needs storage access to cache data for a better experience.") },
+            text = { Text("Promotr needs storage access to cache data for a better experience.") },
             confirmButton = {
                 TextButton(onClick = {
                     showPermissionDialog = false

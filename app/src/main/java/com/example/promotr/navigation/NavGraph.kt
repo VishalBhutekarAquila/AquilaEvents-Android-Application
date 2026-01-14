@@ -4,7 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.promotr.ui.auth.AuthScreen
+import com.example.promotr.ui.auth.LoginScreen
+import com.example.promotr.ui.auth.OtpVerificationScreen
+import com.example.promotr.ui.auth.RoleSelectionScreen
 import com.example.promotr.ui.main.MainScreen
 import com.example.promotr.ui.onboarding.OnboardingSelectionScreen
 import com.example.promotr.ui.onboarding.OnboardingStepsScreen
@@ -52,10 +54,37 @@ fun NavGraph(navController: NavHostController) {
         }
         
         composable(Screen.Auth.route) {
-            AuthScreen(
+            LoginScreen(
                 onNavigateToMain = {
-                    navController.navigate(Screen.Main.route) {
+                    navController.navigate(Screen.OtpVerification.route)
+                },
+                defaultToPhone = false
+            )
+        }
+        
+        composable(Screen.OtpVerification.route) {
+            OtpVerificationScreen(
+                onBack = {
+                    navController.popBackStack()
+                },
+                onVerify = {
+                    navController.navigate(Screen.RoleSelection.route) {
                         popUpTo(Screen.Auth.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+        
+        composable(Screen.RoleSelection.route) {
+            RoleSelectionScreen(
+                onContinue = { role ->
+                    navController.navigate(Screen.Main.route) {
+                        popUpTo(Screen.RoleSelection.route) { inclusive = true }
+                    }
+                },
+                onLogin = {
+                    navController.navigate(Screen.Auth.route) {
+                        popUpTo(Screen.RoleSelection.route) { inclusive = true }
                     }
                 }
             )
