@@ -78,8 +78,17 @@ fun NavGraph(navController: NavHostController) {
         composable(Screen.RoleSelection.route) {
             RoleSelectionScreen(
                 onContinue = { role ->
-                    navController.navigate(Screen.Main.route) {
-                        popUpTo(Screen.RoleSelection.route) { inclusive = true }
+                    when (role) {
+                        com.example.promotr.ui.auth.UserRole.CREW -> {
+                            navController.navigate(Screen.BasicInfo.route) {
+                                popUpTo(Screen.RoleSelection.route) { inclusive = true }
+                            }
+                        }
+                        com.example.promotr.ui.auth.UserRole.ORGANIZER -> {
+                            navController.navigate(Screen.Main.route) {
+                                popUpTo(Screen.RoleSelection.route) { inclusive = true }
+                            }
+                        }
                     }
                 },
                 onLogin = {
@@ -92,6 +101,61 @@ fun NavGraph(navController: NavHostController) {
         
         composable(Screen.Main.route) {
             MainScreen()
+        }
+        
+        composable(Screen.CrewHome.route) {
+            com.example.promotr.ui.crew.home.HomeScreen()
+        }
+        
+        composable(Screen.BasicInfo.route) {
+            com.example.promotr.ui.crew.registration.BasicInfoScreen(
+                onBack = {
+                    navController.popBackStack()
+                },
+                onNext = {
+                    navController.navigate(Screen.Experience.route)
+                }
+            )
+        }
+        
+        composable(Screen.Experience.route) {
+            com.example.promotr.ui.crew.registration.ExperienceScreen(
+                onBack = {
+                    navController.popBackStack()
+                },
+                onNext = {
+                    navController.navigate(Screen.PhotoUpload.route)
+                }
+            )
+        }
+        
+        composable(Screen.PhotoUpload.route) {
+            com.example.promotr.ui.crew.registration.PhotoUploadScreen(
+                onBack = {
+                    navController.popBackStack()
+                },
+                onCompleteKyc = {
+                    navController.navigate(Screen.AadhaarUpload.route)
+                },
+                onGoToHome = {
+                    navController.navigate(Screen.CrewHome.route) {
+                        popUpTo(Screen.PhotoUpload.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+        
+        composable(Screen.AadhaarUpload.route) {
+            com.example.promotr.ui.crew.kyc.AadhaarUploadScreen(
+                onBack = {
+                    navController.popBackStack()
+                },
+                onNext = {
+                    navController.navigate(Screen.CrewHome.route) {
+                        popUpTo(Screen.AadhaarUpload.route) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }

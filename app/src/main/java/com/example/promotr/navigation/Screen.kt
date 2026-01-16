@@ -8,4 +8,9 @@ sealed class Screen(val route: String) {
     object OtpVerification : Screen("otp_verification")
     object RoleSelection : Screen("role_selection")
     object Main : Screen("main")
+    object CrewHome : Screen("crew_home")
+    object BasicInfo : Screen("basic_info")
+    object Experience : Screen("experience")
+    object PhotoUpload : Screen("photo_upload")
+    object AadhaarUpload : Screen("aadhaar_upload")
 }

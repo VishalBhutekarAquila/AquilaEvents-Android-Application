@@ -65,3 +65,40 @@ val RoleSurfaceLight = Color(0xFFFFFFFF) // #ffffff
 val RoleSurfaceDark = Color(0xFF1E2936) // #1e2936
 val RoleOrange500 = Color(0xFFFF6A00) // orange-500
 val RoleOrangeButton = Color(0xFFFF6A00) // Same as RoleOrange500
+
+// Home Page Colors
+val HomePrimary = Color(0xFFF2870D) // #f2870d
+val HomeBackgroundLight = Color(0xFFF8F7F5) // #f8f7f5
+val HomeBackgroundDark = Color(0xFF221A10) // #221a10
+val HomeSurfaceDark = Color(0xFF2C241B) // #2c241b
+val HomeTextPrimary = Color(0xFF181511) // #181511
+val HomeTextSecondary = Color(0xFF6B7280) // gray-500
+val HomeTextTertiary = Color(0xFF9CA3AF) // gray-400
+
+// Job Type Badge Colors
+val JobTypeOneOff = Color(0xFF3B82F6) // blue-500
+val JobTypeOneOffBg = Color(0xFFDBEAFE) // blue-100
+val JobTypeUrgent = Color(0xFFA855F7) // purple-500
+val JobTypeUrgentBg = Color(0xFFE9D5FF) // purple-100
+val JobTypeMultiDay = Color(0xFF10B981) // green-500
+val JobTypeMultiDayBg = Color(0xFFD1FAE5) // green-100
+
+// Registration Colors
+val RegistrationPrimary = Color(0xFFEC7F13) // #ec7f13 (Basic Info)
+val RegistrationPrimaryExp = Color(0xFFF48C25) // #f48c25 (Experience)
+val RegistrationPrimaryPhoto = Color(0xFFF27F0D) // #f27f0d (Photo Upload)
+val RegistrationBackground = Color(0xFFF8F7F6) // #f8f7f6
+val RegistrationBackgroundAlt = Color(0xFFF8F7F5) // #f8f7f5
+val RegistrationSurfaceLight = Color(0xFFFFFFFF) // #ffffff
+val RegistrationSurfaceDark = Color(0xFF2D241B) // #2d241b
+val RegistrationTextMain = Color(0xFF1C140D) // #1c140d
+val RegistrationTextSec = Color(0xFF9C7349) // #9c7349
+val RegistrationBorder = Color(0xFFE8DBCE) // #e8dbce
+val RegistrationInputBg = Color(0xFFFCFAF8) // #fcfaf8
+
+// KYC Colors
+val KycPrimary = Color(0xFFF27F0D) // #f27f0d
+val KycBackground = Color(0xFFF8F7F5) // #f8f7f5
+val KycSurface = Color(0xFFFFFFFF) // #ffffff
+val KycTextMain = Color(0xFF1C140D) // #1c140d
+val KycTextSub = Color(0xFF9CA3AF) // #9ca3af

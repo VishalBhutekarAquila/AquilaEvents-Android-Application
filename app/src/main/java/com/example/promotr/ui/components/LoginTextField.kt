@@ -37,6 +37,7 @@ fun LoginTextField(
     isPassword: Boolean = false,
     isPasswordVisible: Boolean = false,
     keyboardType: KeyboardType = KeyboardType.Text,
+    readOnly: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     TextField(
@@ -44,6 +45,7 @@ fun LoginTextField(
         onValueChange = onValueChange,
         label = { Text(label) },
         placeholder = { Text(placeholder, color = LoginTextTertiary) },
+        readOnly = readOnly,
         leadingIcon = leadingIcon?.let {
             {
                 Icon(
