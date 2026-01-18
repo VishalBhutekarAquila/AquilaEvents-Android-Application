@@ -13,4 +13,10 @@ sealed class Screen(val route: String) {
     object Experience : Screen("experience")
     object PhotoUpload : Screen("photo_upload")
     object AadhaarUpload : Screen("aadhaar_upload")
+    object Profile : Screen("profile")
+    object Earnings : Screen("earnings")
+    object JobApplicationStep1 : Screen("job_application_step1")
+    object JobApplicationStep2 : Screen("job_application_step2")
+    object JobApplicationStep3 : Screen("job_application_step3")
+    object Notifications : Screen("notifications")
 }

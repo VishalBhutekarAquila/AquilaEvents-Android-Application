@@ -11,6 +11,14 @@ import com.example.promotr.ui.main.MainScreen
 import com.example.promotr.ui.onboarding.OnboardingSelectionScreen
 import com.example.promotr.ui.onboarding.OnboardingStepsScreen
 import com.example.promotr.ui.splash.SplashScreen
+import com.example.promotr.ui.crew.profile.ProfileScreen
+import com.example.promotr.ui.crew.earnings.EarningsScreen
+import com.example.promotr.ui.crew.jobapplication.JobApplicationStep1Screen
+import com.example.promotr.ui.crew.jobapplication.JobApplicationStep2Screen
+import com.example.promotr.ui.crew.jobapplication.JobApplicationStep3Screen
+import com.example.promotr.ui.crew.notifications.NotificationsScreen
+import com.example.promotr.ui.models.JobListing
+import com.example.promotr.ui.models.JobType
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -104,7 +112,18 @@ fun NavGraph(navController: NavHostController) {
         }
         
         composable(Screen.CrewHome.route) {
-            com.example.promotr.ui.crew.home.HomeScreen()
+            com.example.promotr.ui.crew.home.HomeScreen(
+                onNavigateToEarnings = {
+                    navController.navigate(Screen.Earnings.route)
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.Profile.route)
+                },
+                onNavigateToJobApplication = { job ->
+                    // Navigate to step 1 with job data (using default for now)
+                    navController.navigate(Screen.JobApplicationStep1.route)
+                }
+            )
         }
         
         composable(Screen.BasicInfo.route) {
@@ -154,6 +173,109 @@ fun NavGraph(navController: NavHostController) {
                     navController.navigate(Screen.CrewHome.route) {
                         popUpTo(Screen.AadhaarUpload.route) { inclusive = true }
                     }
+                }
+            )
+        }
+        
+        composable(Screen.Profile.route) {
+            ProfileScreen(
+                onBack = {
+                    navController.popBackStack()
+                },
+                onSettingsClick = {
+                    // Handle settings navigation
+                },
+                onNavigateToHome = {
+                    navController.navigate(Screen.CrewHome.route) {
+                        popUpTo(Screen.Profile.route) { inclusive = true }
+                    }
+                },
+                onNavigateToJobs = {
+                    // Handle jobs navigation
+                },
+                onNavigateToEarnings = {
+                    navController.navigate(Screen.Earnings.route) {
+                        popUpTo(Screen.Profile.route) { inclusive = true }
+                    }
+                },
+                onNavigateToProfile = {
+                    // Already on profile
+                }
+            )
+        }
+        
+        composable(Screen.Earnings.route) {
+            EarningsScreen(
+                onBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToHome = {
+                    navController.navigate(Screen.CrewHome.route) {
+                        popUpTo(Screen.Earnings.route) { inclusive = true }
+                    }
+                },
+                onNavigateToEarnings = {
+                    // Already on earnings
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.Profile.route) {
+                        popUpTo(Screen.Earnings.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+        
+        composable(Screen.JobApplicationStep1.route) {
+            // Using a default job for now - in production, pass job ID and fetch from ViewModel
+            val defaultJob = JobListing(
+                id = "1",
+                title = "Event Promoter",
+                type = JobType.ONE_OFF_EVENT,
+                pay = "$25",
+                payType = "hr",
+                location = "Convention Center, Downtown",
+                date = "Sat, Oct 24",
+                time = "9:00 AM - 5:00 PM",
+                description = "Looking for energetic brand ambassadors to distribute flyers and engage with attendees at the annual Tech Summit."
+            )
+            JobApplicationStep1Screen(
+                job = defaultJob,
+                onBack = {
+                    navController.popBackStack()
+                },
+                onNext = {
+                    navController.navigate(Screen.JobApplicationStep2.route)
+                }
+            )
+        }
+        
+        composable(Screen.JobApplicationStep2.route) {
+            JobApplicationStep2Screen(
+                onBack = {
+                    navController.popBackStack()
+                },
+                onNext = {
+                    navController.navigate(Screen.JobApplicationStep3.route) {
+                        popUpTo(Screen.JobApplicationStep1.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+        
+        composable(Screen.JobApplicationStep3.route) {
+            JobApplicationStep3Screen(
+                onGoToHome = {
+                    navController.navigate(Screen.CrewHome.route) {
+                        popUpTo(Screen.JobApplicationStep3.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+        
+        composable(Screen.Notifications.route) {
+            NotificationsScreen(
+                onBack = {
+                    navController.popBackStack()
                 }
             )
         }

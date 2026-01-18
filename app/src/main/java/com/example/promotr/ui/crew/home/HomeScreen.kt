@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.promotr.ui.components.CategoryFilterChip
@@ -43,11 +44,13 @@ import com.example.promotr.ui.models.JobType
 import com.example.promotr.ui.theme.HomeBackgroundLight
 import com.example.promotr.ui.theme.HomePrimary
 import com.example.promotr.ui.theme.White
+@Preview
 
 @Composable
 fun HomeScreen(
     onNavigateToEarnings: () -> Unit = {},
-    onNavigateToProfile: () -> Unit = {}
+    onNavigateToProfile: () -> Unit = {},
+    onNavigateToJobApplication: (com.example.promotr.ui.models.JobListing) -> Unit = {}
 ) {
     var selectedCategory by remember { mutableStateOf("All Jobs") }
     var currentNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
@@ -311,7 +314,7 @@ fun HomeScreen(
                 items(jobs) { job ->
                     JobCard(
                         job = job,
-                        onApplyClick = { /* Handle apply */ },
+                        onApplyClick = { onNavigateToJobApplication(job) },
                         onBookmarkClick = { /* Handle bookmark */ }
                     )
                 }
@@ -321,12 +324,12 @@ fun HomeScreen(
         // Bottom Navigation
         BottomNavigation(
             currentItem = currentNavItem,
-            onItemClick = { item ->
+                onItemClick = { item ->
                 currentNavItem = item
                 when (item) {
                     BottomNavItem.EARNINGS -> onNavigateToEarnings()
                     BottomNavItem.PROFILE -> onNavigateToProfile()
-                    else -> {}
+                    BottomNavItem.HOME -> { /* Already on home */ }
                 }
             },
             modifier = Modifier.align(Alignment.BottomCenter)
